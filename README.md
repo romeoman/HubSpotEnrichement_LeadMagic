@@ -24,6 +24,13 @@ To use the custom code actions in your HubSpot workflows, follow these steps:
 4. Customize the code snippets to suit your specific use case and requirements.
 5. Save the workflow.
 
+## Workflows
+
+I added 2 workflows where you can use the code:
+
+1. [Company Workflow](https://github.com/romeoman/HubSpotEnrichement_LeadMagic/blob/main/DI.06%20-%20Enrich%20Company%20with%20Third-Party%20Data%20.png)
+2. [Contact Workflow](https://github.com/romeoman/HubSpotEnrichement_LeadMagic/blob/main/DI.05%20-%20Enrich%20Contacts%20with%20Third-Party%20Data%20.png)
+
 ## Additional Information
 
 - Custom code actions in HubSpot workflows allow you to extend the functionality of your workflows using JavaScript.
