@@ -1,0 +1,3624 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.5",
+    "title": "Business Data",
+    "description": ""
+  },
+  "servers": [
+    {
+      "url": "https://api.leadmagic.io/business",
+      "description": "Blobr API Gateway"
+    },
+    {
+      "url": "https://cnaanwp95disozdd.plugin.blobr.app",
+      "description": "ChatGPT plugin URL"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "x-blobr-key",
+        "in": "header"
+      }
+    },
+    "schemas": {}
+  },
+  "paths": {
+    "/api/linkedin/person/profile-picture": {
+      "get": {
+        "description": "Cost: 0 credit / successful request.\nGet the profile picture of a person.\n\nProfile pictures are served from cached people profiles found within [LinkDB](https://nubela.co/proxycurl/linkdb).\nIf the profile does not exist within [LinkDB](https://nubela.co/proxycurl/linkdb), then the API will return a `404` status code.",
+        "operationId": "getApiLinkedinPersonProfilePicture",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tmp_profile_pic_url": {
+                      "type": "string",
+                      "description": "\n            Temporary URL to the profile picture (valid for just 30 minutes).\n            See this [blog post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for more information."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "linkedin_person_profile_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    LinkedIn Profile URL of the person that you are trying to get the profile picture of.\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/profile/resolve/email": {
+      "get": {
+        "description": "Cost: 3 credits / successful request.\nResolve LinkedIn Profile from a work email address",
+        "operationId": "getApiLinkedinProfileResolveEmail",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "work_email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Work email address of the user"
+          }
+        ]
+      }
+    },
+    "/api/contact-api/personal-contact": {
+      "get": {
+        "description": "Cost: 1 credit / contact number returned.\nGiven an LinkedIn profile, returns a list of personal contact numbers belonging to this identity.",
+        "operationId": "getApiContactApiPersonalContact",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "numbers": {
+                      "type": "array",
+                      "description": "A list of contact numbers",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "linkedin_profile_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    LinkedIn Profile URL of the person you want to extract personal contact numbers from.\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/profile/email": {
+      "get": {
+        "description": "Cost: 3 credits / request.\nLookup work email address of a LinkedIn Person Profile.\n\nEmail addresses returned are verified to not be role-based or catch-all emails. Email addresses\nreturned by our API endpoint come with a 95+% deliverability guarantee\n\n**Endpoint behavior**\n\n*This endpoint* **_may not_** *return results immediately.*\n\nIf you provided a webhook in your request parameter, our application will call your webhook with\nthe result once. See `Webhook request` below.",
+        "operationId": "getApiLinkedinProfileEmail",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "email_queue_count": {
+                      "type": "integer",
+                      "description": "Total queue in the email extraction process"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "linkedin_profile_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Linkedin Profile URL of the person you want to\n    extract work email address from.\n    "
+          },
+          {
+            "in": "query",
+            "name": "callback_url",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Webhook to notify your application when\n    the request has finished processing.\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/school": {
+      "get": {
+        "description": "Cost: 1 credit / successful request.\nGet structured data of a LinkedIn School Profile",
+        "operationId": "getApiLinkedinSchool",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linkedin_internal_id": {
+                      "type": "string",
+                      "description": "\n        LinkedIn's Internal and immutable ID of this Company profile.         \n        "
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "industry": {
+                      "type": "string"
+                    },
+                    "company_size": {
+                      "type": "array",
+                      "description": "Listed range of company head count",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    "company_size_on_linkedin": {
+                      "type": "integer"
+                    },
+                    "hq": {
+                      "type": "object",
+                      "properties": {
+                        "country": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "postal_code": {
+                          "type": "string"
+                        },
+                        "line_1": {
+                          "type": "string"
+                        },
+                        "is_hq": {
+                          "type": "boolean"
+                        },
+                        "state": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "company_type": {
+                      "type": "string",
+                      "description": "Possible values:  \n\n        `EDUCATIONAL`: Educational Institution\n\n        `GOVERNMENT_AGENCY`: Government Agency\n\n        `NON_PROFIT` : Nonprofit\n\n        `PARTNERSHIP` : Partnership\n\n        `PRIVATELY_HELD`: Privately Held\n\n        `PUBLIC_COMPANY`: Public Company\n\n        `SELF_EMPLOYED`: Self-Employed\n\n        `SELF_OWNED`: Sole Proprietorship"
+                    },
+                    "founded_year": {
+                      "type": "integer"
+                    },
+                    "specialities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "country": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "postal_code": {
+                            "type": "string"
+                          },
+                          "line_1": {
+                            "type": "string"
+                          },
+                          "is_hq": {
+                            "type": "boolean"
+                          },
+                          "state": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "tagline": {
+                      "type": "string",
+                      "example": "Think Different - But Not Too Different"
+                    },
+                    "universal_name_id": {
+                      "type": "string"
+                    },
+                    "profile_pic_url": {
+                      "type": "string"
+                    },
+                    "background_cover_image_url": {
+                      "type": "string"
+                    },
+                    "search_id": {
+                      "type": "string",
+                      "description": "Useable with [Job listing endpoint](#jobs-api-jobs-listing-endpoint)"
+                    },
+                    "similar_companies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "link": {
+                            "type": "string"
+                          },
+                          "industry": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "updates": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "article_link": "https://lnkd.in/gr7cb5by",
+                          "image": "https://media-exp1.licdn.com/dms/image/C5622AQEGh8idEAm14Q/feedshare-shrink_800/0/1633089889886?e=1637798400&v=beta&t=LtGtAUSJNrPYdHpVhTBLhGTWYqrHtFJ86PKSmTpou7c",
+                          "posted_on": {
+                            "day": 30,
+                            "month": 9,
+                            "year": 2021
+                          },
+                          "text": "Introducing Personal Email Lookup API https://lnkd.in/gr7cb5by",
+                          "total_likes": 3
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "article_link": {
+                            "type": "string",
+                            "description": "The URL for which the post links out to"
+                          },
+                          "image": {
+                            "type": "string",
+                            "description": "The URL to the image to the post (if it exists)"
+                          },
+                          "posted_on": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "text": {
+                            "type": "string",
+                            "description": "The body of the update"
+                          },
+                          "total_likes": {
+                            "type": "integer",
+                            "description": "The total likes a post has received"
+                          }
+                        }
+                      }
+                    },
+                    "follower_count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn School Profile to crawl.\n\n    URL should be in the format of `https://www.linkedin.com/school/<public_identifier>`\n    "
+          },
+          {
+            "in": "query",
+            "name": "use_cache",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "`if-present` The default behavior. Fetches profile from cache regardless of age of profile. If profile is not available in cache, API will attempt to source profile externally.\n\n`if-recent` API will make a best effort to return a fresh profile no older than 29 days.Costs an extra `1` credit on top of the cost of the base endpoint."
+          }
+        ]
+      }
+    },
+    "/api/linkedin/company/employee/search/": {
+      "get": {
+        "description": "Cost: 10 credits / successful request.\nSearch employees of a target by their job title.\nThis API endpoint is syntactic sugar for the role_search parameter under the [Employee Listing Endpoint](https://nubela.co/proxycurl/docs#company-api-employee-listing-endpoint).\n\nResults are limited by data that we have within [LinkDB](https://nubela.co/proxycurl/linkdb).\nUse [Role Lookup API Endpoint](https://nubela.co/proxycurl/docs#people-api-role-lookup-endpoint) if you need to query for profiles without LinkDB constraints.\nThe drawbacks of the Role Lookup API Endpoint is that it is less precise and can return at most one result per query.",
+        "operationId": "getApiLinkedinCompanyEmployeeSearch",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "employees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "profile_url": {
+                            "type": "string"
+                          },
+                          "profile": {
+                            "type": "object",
+                            "properties": {
+                              "public_identifier": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The vanity identifier of the public LinkedIn profile.\n                The vanity identifier comes after the `/in/` part of the LinkedIn Profile URL\n                in the following format: `https://www.linkedin.com/in/<public_identifier>`\n            "
+                              },
+                              "profile_pic_url": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A temporary link to the user's profile picture that is valid for 30 minutes. \n                The temporal nature of the link is by design to prevent having Proxycurl be the mirror for the images.\n                The developer is expected to handle these images by downloading the image and re-hosting the image.\n                See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n                Some profile pictures might be of the standard LinkedIn's profile picture placeholder. It is so because. See [this post](https://nubela.co/blog/why-do-most-linkedin-profiles-fetched-via-the-person-profile-endpoint-return-a-placeholder-profile-picture/) for context.\n            "
+                              },
+                              "background_cover_image_url": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A temporary link to the user's background cover picture\n                that is valid for 30 minutes.\n                The temporal nature of the link is by design to prevent\n                having Proxycurl be the mirror for the images.\n                The developer is expected to handle these images \n                by downloading the image and re-hosting the image. \n                See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n            "
+                              },
+                              "first_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "First name of the user."
+                              },
+                              "last_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "Last name of the user."
+                              },
+                              "full_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                Full name of the user (`first_name` + `last_name`)\n            "
+                              },
+                              "occupation": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The title and company name of the user's current employment.\n            "
+                              },
+                              "headline": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The tagline written by the user for his profile.\n            "
+                              },
+                              "summary": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A blurb (longer than the tagline) written by the user for his profile.\n            "
+                              },
+                              "country": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The user's country of residence depicted by\n                a 2-letter country code (ISO 3166-1 alpha-2).\n            "
+                              },
+                              "country_full_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The user's country of residence, in English words."
+                              },
+                              "city": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The city that the user is living at."
+                              },
+                              "state": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The state that the user is living at."
+                              },
+                              "experiences": {
+                                "type": "array",
+                                "description": "The user's list of historic work experiences."
+                              },
+                              "education": {
+                                "type": "array",
+                                "description": "The user's list of education background."
+                              },
+                              "languages": {
+                                "type": "array",
+                                "description": "\n                A list of languages that the user claims to be familiar with,\n                and has added to his/her profile.\n                Do note that we do not have the proficiency level as\n                that data point is not available on a public LinkedIn profile.\n            "
+                              },
+                              "accomplishment_organisations": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy organizations that this user is part of.\n            ",
+                                "example": [
+                                  {
+                                    "starts_at": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 2012
+                                    },
+                                    "ends_at": {
+                                      "day": 1,
+                                      "month": 8,
+                                      "year": 2016
+                                    },
+                                    "org_name": "Microsoft",
+                                    "title": "Software Developer",
+                                    "description": null
+                                  }
+                                ]
+                              },
+                              "accomplishment_publications": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy publications that this user has partook in.\n            ",
+                                "example": [
+                                  {
+                                    "name": "Nobel Peace Prize",
+                                    "publisher": "Acme Corp",
+                                    "published_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    ",
+                                    "url": "https://example.com"
+                                  }
+                                ]
+                              },
+                              "accomplishment_honors_awards": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy honours and awards that this user has won.\n            ",
+                                "example": [
+                                  {
+                                    "title": "Nobel Peace Prize",
+                                    "issuer": "Acme Corp",
+                                    "issued_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    "
+                                  }
+                                ]
+                              },
+                              "accomplishment_patents": {
+                                "type": "array",
+                                "description": "List of noteworthy patents won by this user.",
+                                "example": [
+                                  {
+                                    "title": "The art of war",
+                                    "issuer": "Acme Corp",
+                                    "issued_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    ",
+                                    "application_number": "123",
+                                    "patent_number": "123",
+                                    "url": null
+                                  }
+                                ]
+                              },
+                              "accomplishment_courses": {
+                                "type": "array",
+                                "description": "List of noteworthy courses partook by this user.",
+                                "example": [
+                                  {
+                                    "name": "The course about ABCs",
+                                    "number": "123"
+                                  }
+                                ]
+                              },
+                              "accomplishment_projects": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy projects undertaken by this user.\n            "
+                              },
+                              "accomplishment_test_scores": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy test scores accomplished by this user.\n            ",
+                                "example": [
+                                  {
+                                    "name": "CS1101S",
+                                    "score": "A",
+                                    "date_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 2010
+                                    },
+                                    "description": "Nailed it without studying."
+                                  }
+                                ]
+                              },
+                              "volunteer_work": {
+                                "type": "array",
+                                "description": "List of historic volunteer work experiences."
+                              },
+                              "certifications": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy certifications accomplished by this user.\n            "
+                              },
+                              "connections": {
+                                "type": "integer",
+                                "nullable": true,
+                                "description": "Total *count* of LinkedIn connections."
+                              },
+                              "people_also_viewed": {
+                                "type": "array",
+                                "description": "\n                A list of other LinkedIn profiles closely related to this user.\n            "
+                              },
+                              "recommendations": {
+                                "type": "array",
+                                "description": "\n                List of recommendations made by other users about this profile.\n            ",
+                                "example": [
+                                  "Professional and dedicated approach towards clients and collegues."
+                                ]
+                              },
+                              "activities": {
+                                "type": "array",
+                                "description": "A list of LinkedIn status activities."
+                              },
+                              "similarly_named_profiles": {
+                                "type": "array",
+                                "description": "\n                A list of other LinkedIn profiles with similar names.\n            "
+                              },
+                              "articles": {
+                                "type": "array",
+                                "description": "\n                A list of content-based articles posted by this user.\n            ",
+                                "example": [
+                                  {
+                                    "title": "Manufacturing opportunity",
+                                    "link": "https://www.linkedin.com/pulse/manufacturing-opportunity-bill-gates/",
+                                    "published_date": {
+                                      "day": 27,
+                                      "month": 11,
+                                      "year": 2019
+                                    },
+                                    "author": "Bill Gates",
+                                    "image_url": "https://media-exp1.licdn.com/dms/image/C4E12AQFftuPi0UiqWA/article-cover_image-shrink_720_1280/0/1574801149114?e=1640822400&v=beta&t=ZAe3ERmQCM8QHGmRPS2LJ-C76GD5PR7FBHMVL4Z6iVg"
+                                  }
+                                ]
+                              },
+                              "groups": {
+                                "type": "array",
+                                "description": "\n                A list of LinkedIn groups that this user is a part of.\",\n            ",
+                                "example": [
+                                  {
+                                    "profile_pic_url": "https://media-exp1.licdn.com/dms/image/C4D07AQG9IK9V0pk3mQ/group-logo_image-shrink_92x92/0/1631371531293?e=1642060800&v=beta&t=UK1tfIppWa-Nx7k9whmm5f9XdZoBdJhApf9N3ke3204",
+                                    "name": "Hadoop Users",
+                                    "url": "https://www.linkedin.com/groups/988957"
+                                  }
+                                ]
+                              }
+                            },
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://nubela.co/proxycurl/api/linkedin/company/employees/?page_size=100&employment_status=all&resolve_numeric_id=true&url=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2F1035&role_search=%5BFf%5D%5BOo%5D%5BUu%5D%5BNn%5D%5BDd%5D%5BEe%5D%5BRr%5D&after=williamhgates"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Tune the maximum results returned per API call.\n    The default value of this parameter is `200000`.\n    Accepted values for this parameter is an integer ranging from `1` to `200000`.\n    "
+          },
+          {
+            "in": "query",
+            "name": "linkedin_company_profile_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    LinkedIn Profile URL of the target company.\n    "
+          },
+          {
+            "in": "query",
+            "name": "keyword_regex",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Job title keyword to search for in regular expression format.\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/company/employees/": {
+      "get": {
+        "description": "Cost: 3 credits / employee returned.\nGet a list of employees of a Company.\n\nThis API endpoint is limited by LinkDB which is populated with profiles in the US, UK, Canada, Israel, Australia, Ireland, New Zealand and Singapore.\nAs such, this endpoint is best used to list employees working in companies based in those locations only.",
+        "operationId": "getApiLinkedinCompanyEmployees",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "employees": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "profile_url": {
+                            "type": "string"
+                          },
+                          "profile": {
+                            "type": "object",
+                            "properties": {
+                              "public_identifier": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The vanity identifier of the public LinkedIn profile.\n                The vanity identifier comes after the `/in/` part of the LinkedIn Profile URL\n                in the following format: `https://www.linkedin.com/in/<public_identifier>`\n            "
+                              },
+                              "profile_pic_url": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A temporary link to the user's profile picture that is valid for 30 minutes. \n                The temporal nature of the link is by design to prevent having Proxycurl be the mirror for the images.\n                The developer is expected to handle these images by downloading the image and re-hosting the image.\n                See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n                Some profile pictures might be of the standard LinkedIn's profile picture placeholder. It is so because. See [this post](https://nubela.co/blog/why-do-most-linkedin-profiles-fetched-via-the-person-profile-endpoint-return-a-placeholder-profile-picture/) for context.\n            "
+                              },
+                              "background_cover_image_url": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A temporary link to the user's background cover picture\n                that is valid for 30 minutes.\n                The temporal nature of the link is by design to prevent\n                having Proxycurl be the mirror for the images.\n                The developer is expected to handle these images \n                by downloading the image and re-hosting the image. \n                See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n            "
+                              },
+                              "first_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "First name of the user."
+                              },
+                              "last_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "Last name of the user."
+                              },
+                              "full_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                Full name of the user (`first_name` + `last_name`)\n            "
+                              },
+                              "occupation": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The title and company name of the user's current employment.\n            "
+                              },
+                              "headline": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The tagline written by the user for his profile.\n            "
+                              },
+                              "summary": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A blurb (longer than the tagline) written by the user for his profile.\n            "
+                              },
+                              "country": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The user's country of residence depicted by\n                a 2-letter country code (ISO 3166-1 alpha-2).\n            "
+                              },
+                              "country_full_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The user's country of residence, in English words."
+                              },
+                              "city": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The city that the user is living at."
+                              },
+                              "state": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The state that the user is living at."
+                              },
+                              "experiences": {
+                                "type": "array",
+                                "description": "The user's list of historic work experiences."
+                              },
+                              "education": {
+                                "type": "array",
+                                "description": "The user's list of education background."
+                              },
+                              "languages": {
+                                "type": "array",
+                                "description": "\n                A list of languages that the user claims to be familiar with,\n                and has added to his/her profile.\n                Do note that we do not have the proficiency level as\n                that data point is not available on a public LinkedIn profile.\n            "
+                              },
+                              "accomplishment_organisations": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy organizations that this user is part of.\n            ",
+                                "example": [
+                                  {
+                                    "starts_at": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 2012
+                                    },
+                                    "ends_at": {
+                                      "day": 1,
+                                      "month": 8,
+                                      "year": 2016
+                                    },
+                                    "org_name": "Microsoft",
+                                    "title": "Software Developer",
+                                    "description": null
+                                  }
+                                ]
+                              },
+                              "accomplishment_publications": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy publications that this user has partook in.\n            ",
+                                "example": [
+                                  {
+                                    "name": "Nobel Peace Prize",
+                                    "publisher": "Acme Corp",
+                                    "published_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    ",
+                                    "url": "https://example.com"
+                                  }
+                                ]
+                              },
+                              "accomplishment_honors_awards": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy honours and awards that this user has won.\n            ",
+                                "example": [
+                                  {
+                                    "title": "Nobel Peace Prize",
+                                    "issuer": "Acme Corp",
+                                    "issued_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    "
+                                  }
+                                ]
+                              },
+                              "accomplishment_patents": {
+                                "type": "array",
+                                "description": "List of noteworthy patents won by this user.",
+                                "example": [
+                                  {
+                                    "title": "The art of war",
+                                    "issuer": "Acme Corp",
+                                    "issued_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    ",
+                                    "application_number": "123",
+                                    "patent_number": "123",
+                                    "url": null
+                                  }
+                                ]
+                              },
+                              "accomplishment_courses": {
+                                "type": "array",
+                                "description": "List of noteworthy courses partook by this user.",
+                                "example": [
+                                  {
+                                    "name": "The course about ABCs",
+                                    "number": "123"
+                                  }
+                                ]
+                              },
+                              "accomplishment_projects": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy projects undertaken by this user.\n            "
+                              },
+                              "accomplishment_test_scores": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy test scores accomplished by this user.\n            ",
+                                "example": [
+                                  {
+                                    "name": "CS1101S",
+                                    "score": "A",
+                                    "date_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 2010
+                                    },
+                                    "description": "Nailed it without studying."
+                                  }
+                                ]
+                              },
+                              "volunteer_work": {
+                                "type": "array",
+                                "description": "List of historic volunteer work experiences."
+                              },
+                              "certifications": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy certifications accomplished by this user.\n            "
+                              },
+                              "connections": {
+                                "type": "integer",
+                                "nullable": true,
+                                "description": "Total *count* of LinkedIn connections."
+                              },
+                              "people_also_viewed": {
+                                "type": "array",
+                                "description": "\n                A list of other LinkedIn profiles closely related to this user.\n            "
+                              },
+                              "recommendations": {
+                                "type": "array",
+                                "description": "\n                List of recommendations made by other users about this profile.\n            ",
+                                "example": [
+                                  "Professional and dedicated approach towards clients and collegues."
+                                ]
+                              },
+                              "activities": {
+                                "type": "array",
+                                "description": "A list of LinkedIn status activities."
+                              },
+                              "similarly_named_profiles": {
+                                "type": "array",
+                                "description": "\n                A list of other LinkedIn profiles with similar names.\n            "
+                              },
+                              "articles": {
+                                "type": "array",
+                                "description": "\n                A list of content-based articles posted by this user.\n            ",
+                                "example": [
+                                  {
+                                    "title": "Manufacturing opportunity",
+                                    "link": "https://www.linkedin.com/pulse/manufacturing-opportunity-bill-gates/",
+                                    "published_date": {
+                                      "day": 27,
+                                      "month": 11,
+                                      "year": 2019
+                                    },
+                                    "author": "Bill Gates",
+                                    "image_url": "https://media-exp1.licdn.com/dms/image/C4E12AQFftuPi0UiqWA/article-cover_image-shrink_720_1280/0/1574801149114?e=1640822400&v=beta&t=ZAe3ERmQCM8QHGmRPS2LJ-C76GD5PR7FBHMVL4Z6iVg"
+                                  }
+                                ]
+                              },
+                              "groups": {
+                                "type": "array",
+                                "description": "\n                A list of LinkedIn groups that this user is a part of.\",\n            ",
+                                "example": [
+                                  {
+                                    "profile_pic_url": "https://media-exp1.licdn.com/dms/image/C4D07AQG9IK9V0pk3mQ/group-logo_image-shrink_92x92/0/1631371531293?e=1642060800&v=beta&t=UK1tfIppWa-Nx7k9whmm5f9XdZoBdJhApf9N3ke3204",
+                                    "name": "Hadoop Users",
+                                    "url": "https://www.linkedin.com/groups/988957"
+                                  }
+                                ]
+                              }
+                            },
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "https://nubela.co/proxycurl/api/linkedin/company/employees/?page_size=100&employment_status=all&resolve_numeric_id=true&url=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2F1035&role_search=%5BFf%5D%5BOo%5D%5BUu%5D%5BNn%5D%5BDd%5D%5BEe%5D%5BRr%5D&after=williamhgates"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Limit the result set to the country locality of the profile. For example, set the parameter of `country=us` if you only want profiles from the US.\n\n    This parameter accepts a **case-insensitive** [Alpha-2 ISO3166 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).\n\n    Costs an extra `3` credit per result returned.\n    "
+          },
+          {
+            "in": "query",
+            "name": "enrich_profiles",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Get the full profile of employees instead of only their profile urls.\n\n    Each request respond with a streaming response of profiles.\n\n    The valid values are:\n    \n    * `skip` (default): lists employee's profile url\n    * `enrich`: lists full profile of employees\n\n    Calling this API endpoint with this parameter would add `1` credit per employee returned.\n    "
+          },
+          {
+            "in": "query",
+            "name": "role_search",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Filter employees by their title by matching the employee's title against a *regular expression*.\n\n    The default value of this parameter is `null`.\n\n    The accepted value is a *regular expression* (regex).\n\n    (The base cost of calling this API endpoint with this parameter would be `10` credits.\n    Each employee matched and returned would cost `6` credits per employee returned.)\n    "
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Tune the maximum results returned per API call.\n\n    The default value of this parameter is `200000`.\n\n    Accepted values for this parameter is an integer ranging from `1` to `200000`.\n\n    When `enrich_profiles=enrich`, this parameter accepts value ranging from `1` to `100`.\n    "
+          },
+          {
+            "in": "query",
+            "name": "employment_status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Parameter to tell the API to return past or current employees.\n\n    Valid values are `current`, `past`, and `all`:\n\n    * `current` (default) : lists current employees\n    * `past` : lists past employees\n    * `all` : lists current & past employees\n    "
+          },
+          {
+            "in": "query",
+            "name": "resolve_numeric_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enable support for Company Profile URLs with numerical IDs that you most frequently fetch from Sales Navigator. \n    We achieve this by resolving numerical IDs into vanity IDs with cached company profiles from [LinkDB](https://nubela.co/proxycurl/linkdb). \n    For example, we will turn `https://www.linkedin.com/company/1234567890` to `https://www.linkedin.com/company/acme-corp` -- for which the API endpoint only supports the latter.\n    \n    This parameter accepts the following values:\n    - `false` (default value) - Will not resolve numerical IDs.\n    - `true` - Enable support for Company Profile URLs with numerical IDs. \n    Costs an extra `2` credit on top of the base cost of the endpoint.\n    "
+          },
+          {
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn Company Profile to target.\n\n    URL should be in the format of `https://www.linkedin.com/company/<public_identifier>`\n    "
+          }
+        ]
+      }
+    },
+    "/api/disposable-email": {
+      "get": {
+        "description": "Cost: 0 credit / request.\nGiven an email address, checks if the email address belongs to a disposable email service.",
+        "operationId": "getApiDisposableEmail",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "is_disposable_email": {
+                      "type": "boolean",
+                      "description": "Returns a boolean value of the disposable nature of the given email address"
+                    },
+                    "is_free_email": {
+                      "type": "boolean",
+                      "description": "Returns a boolean value of the free status of the given email address"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Email address to check"
+          }
+        ]
+      }
+    },
+    "/api/linkedin/company": {
+      "get": {
+        "description": "Cost: 1 credit / successful request.\nGet structured data of a Company Profile",
+        "operationId": "getApiLinkedinCompany",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linkedin_internal_id": {
+                      "type": "string",
+                      "description": "\n        LinkedIn's Internal and immutable ID of this Company profile.         \n        "
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "industry": {
+                      "type": "string"
+                    },
+                    "company_size": {
+                      "type": "array",
+                      "description": "Listed range of company head count",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    "company_size_on_linkedin": {
+                      "type": "integer"
+                    },
+                    "hq": {
+                      "type": "object",
+                      "properties": {
+                        "country": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "postal_code": {
+                          "type": "string"
+                        },
+                        "line_1": {
+                          "type": "string"
+                        },
+                        "is_hq": {
+                          "type": "boolean"
+                        },
+                        "state": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "company_type": {
+                      "type": "string",
+                      "description": "Possible values:  \n\n        `EDUCATIONAL`: Educational Institution\n\n        `GOVERNMENT_AGENCY`: Government Agency\n\n        `NON_PROFIT` : Nonprofit\n\n        `PARTNERSHIP` : Partnership\n\n        `PRIVATELY_HELD`: Privately Held\n\n        `PUBLIC_COMPANY`: Public Company\n\n        `SELF_EMPLOYED`: Self-Employed\n\n        `SELF_OWNED`: Sole Proprietorship"
+                    },
+                    "founded_year": {
+                      "type": "integer"
+                    },
+                    "specialities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "locations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "country": {
+                            "type": "string"
+                          },
+                          "city": {
+                            "type": "string"
+                          },
+                          "postal_code": {
+                            "type": "string"
+                          },
+                          "line_1": {
+                            "type": "string"
+                          },
+                          "is_hq": {
+                            "type": "boolean"
+                          },
+                          "state": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "tagline": {
+                      "type": "string",
+                      "example": "Think Different - But Not Too Different"
+                    },
+                    "universal_name_id": {
+                      "type": "string"
+                    },
+                    "profile_pic_url": {
+                      "type": "string"
+                    },
+                    "background_cover_image_url": {
+                      "type": "string"
+                    },
+                    "search_id": {
+                      "type": "string",
+                      "description": "Useable with [Job listing endpoint](#jobs-api-jobs-listing-endpoint)"
+                    },
+                    "similar_companies": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "link": {
+                            "type": "string"
+                          },
+                          "industry": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "updates": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "article_link": "https://lnkd.in/gr7cb5by",
+                          "image": "https://media-exp1.licdn.com/dms/image/C5622AQEGh8idEAm14Q/feedshare-shrink_800/0/1633089889886?e=1637798400&v=beta&t=LtGtAUSJNrPYdHpVhTBLhGTWYqrHtFJ86PKSmTpou7c",
+                          "posted_on": {
+                            "day": 30,
+                            "month": 9,
+                            "year": 2021
+                          },
+                          "text": "Introducing Personal Email Lookup API https://lnkd.in/gr7cb5by",
+                          "total_likes": 3
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "article_link": {
+                            "type": "string",
+                            "description": "The URL for which the post links out to"
+                          },
+                          "image": {
+                            "type": "string",
+                            "description": "The URL to the image to the post (if it exists)"
+                          },
+                          "posted_on": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "text": {
+                            "type": "string",
+                            "description": "The body of the update"
+                          },
+                          "total_likes": {
+                            "type": "integer",
+                            "description": "The total likes a post has received"
+                          }
+                        }
+                      }
+                    },
+                    "follower_count": {
+                      "type": "integer"
+                    },
+                    "acquisitions": {
+                      "type": "object",
+                      "properties": {
+                        "acquired": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "linkedin_profile_url": {
+                                "type": "string",
+                                "description": "LinkedIn Company Profile URL of company that was involved"
+                              },
+                              "crunchbase_profile_url": {
+                                "type": "string",
+                                "description": "Crunchbase Profile URL of company that was involved"
+                              },
+                              "announced_date": {
+                                "type": "object",
+                                "properties": {
+                                  "day": {
+                                    "type": "integer"
+                                  },
+                                  "month": {
+                                    "type": "integer"
+                                  },
+                                  "year": {
+                                    "type": "integer"
+                                  }
+                                },
+                                "description": "Date by which this event was announced"
+                              },
+                              "price": {
+                                "type": "integer",
+                                "description": "Price of acquisition"
+                              }
+                            }
+                          }
+                        },
+                        "acquired_by": {
+                          "type": "object",
+                          "properties": {
+                            "linkedin_profile_url": {
+                              "type": "string",
+                              "description": "LinkedIn Company Profile URL of company that was involved"
+                            },
+                            "crunchbase_profile_url": {
+                              "type": "string",
+                              "description": "Crunchbase Profile URL of company that was involved"
+                            },
+                            "announced_date": {
+                              "type": "object",
+                              "properties": {
+                                "day": {
+                                  "type": "integer"
+                                },
+                                "month": {
+                                  "type": "integer"
+                                },
+                                "year": {
+                                  "type": "integer"
+                                }
+                              },
+                              "description": "Date by which this event was announced"
+                            },
+                            "price": {
+                              "type": "integer",
+                              "description": "Price of acquisition"
+                            }
+                          }
+                        }
+                      },
+                      "example": {
+                        "acquired": [
+                          {
+                            "linkedin_profile_url": "https://www.linkedin.com/company/apple",
+                            "crunchbase_profile_url": "https://www.crunchbase.com/organization/apple",
+                            "announced_date": {
+                              "day": 1,
+                              "month": 4,
+                              "year": 1976
+                            },
+                            "price": 300000000
+                          }
+                        ],
+                        "acquired_by": {
+                          "linkedin_profile_url": "https://www.linkedin.com/company/nvidia",
+                          "crunchbase_profile_url": "https://www.crunchbase.com/organization/nvidia",
+                          "announced_date": {
+                            "day": 6,
+                            "month": 3,
+                            "year": 2020
+                          },
+                          "price": 10000
+                        }
+                      }
+                    },
+                    "exit_data": {
+                      "type": "array",
+                      "example": [
+                        {
+                          "linkedin_profile_url": "https://www.linkedin.com/company/motiondsp",
+                          "crunchbase_profile_url": "https://www.crunchbase.com/organization/motiondsp",
+                          "name": "MotionDSP"
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "linkedin_profile_url": {
+                            "type": "string",
+                            "description": "LinkedIn Profile URL of the company that has exited"
+                          },
+                          "crunchbase_profile_url": {
+                            "type": "string",
+                            "description": "Crunchbase Profile URL of the company that has exited"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Name of the company"
+                          }
+                        }
+                      }
+                    },
+                    "extra": {
+                      "type": "object",
+                      "properties": {
+                        "ipo_status": {
+                          "type": "string",
+                          "description": "IPO status of the company"
+                        },
+                        "crunchbase_rank": {
+                          "type": "integer",
+                          "description": "A measure of prominence of this company by Crunchbase"
+                        },
+                        "founding_date": {
+                          "type": "object",
+                          "properties": {
+                            "day": {
+                              "type": "integer"
+                            },
+                            "month": {
+                              "type": "integer"
+                            },
+                            "year": {
+                              "type": "integer"
+                            }
+                          },
+                          "description": "Date of founding"
+                        },
+                        "operating_status": {
+                          "type": "string",
+                          "description": "Status of the company's operational status"
+                        },
+                        "company_type": {
+                          "type": "string",
+                          "description": "Type of company"
+                        },
+                        "contact_email": {
+                          "type": "string",
+                          "description": "General contact email of the company"
+                        },
+                        "phone_number": {
+                          "type": "string",
+                          "description": "General contact number of the company"
+                        },
+                        "facebook_id": {
+                          "type": "string",
+                          "description": "ID of the company's official Facebook account"
+                        },
+                        "twitter_id": {
+                          "type": "string",
+                          "description": "ID of the company's official Twitter account"
+                        },
+                        "number_of_funding_rounds": {
+                          "type": "integer",
+                          "description": "Total rounds of funding that this company has raised"
+                        },
+                        "total_funding_amount": {
+                          "type": "integer",
+                          "description": "Total venture capital raised by this company"
+                        },
+                        "stock_symbol": {
+                          "type": "string",
+                          "description": "Stock symbol of this public company"
+                        },
+                        "ipo_date": {
+                          "type": "object",
+                          "properties": {
+                            "day": {
+                              "type": "integer"
+                            },
+                            "month": {
+                              "type": "integer"
+                            },
+                            "year": {
+                              "type": "integer"
+                            }
+                          },
+                          "description": "The date by which this public company went public"
+                        },
+                        "number_of_lead_investors": {
+                          "type": "integer",
+                          "description": "Total lead investors"
+                        },
+                        "number_of_investors": {
+                          "type": "integer",
+                          "description": "Total investors"
+                        },
+                        "total_fund_raised": {
+                          "type": "integer",
+                          "description": "The total amount of funds raised (by this VC firm) to be deployed as subsidiary investments (applicable only for VC firms)"
+                        },
+                        "number_of_investments": {
+                          "type": "integer",
+                          "description": "Total investments made by this VC firm (applicable only for VC firms)"
+                        },
+                        "number_of_lead_investments": {
+                          "type": "integer",
+                          "description": "Total investments that was led by this VC firm (applicable only for VC firms)"
+                        },
+                        "number_of_exits": {
+                          "type": "integer",
+                          "description": "Total exits by this VC (applicable only for VC firms)"
+                        },
+                        "number_of_acquisitions": {
+                          "type": "integer",
+                          "description": "Total companies acquired by this company"
+                        }
+                      },
+                      "description": "Company extra when `extra=include`",
+                      "example": {
+                        "ipo_status": "Public",
+                        "crunchbase_rank": 13,
+                        "founding_date": {
+                          "day": 1,
+                          "month": 1,
+                          "year": 2000
+                        },
+                        "operating_status": "Active",
+                        "company_type": "For Profit",
+                        "contact_email": "info@nvidia.com",
+                        "phone_number": "(140) 848-6200",
+                        "facebook_id": "NVIDIA.IN",
+                        "twitter_id": "nvidia",
+                        "number_of_funding_rounds": 3,
+                        "total_funding_amount": 4000000,
+                        "stock_symbol": "NASDAQ:NVDA",
+                        "ipo_date": {
+                          "day": 1,
+                          "month": 1,
+                          "year": 2000
+                        },
+                        "number_of_lead_investors": 3,
+                        "number_of_investors": 4,
+                        "total_fund_raised": 1000,
+                        "number_of_investments": 50,
+                        "number_of_lead_investments": 3,
+                        "number_of_exits": 7,
+                        "number_of_acquisitions": 2
+                      }
+                    },
+                    "funding_data": {
+                      "type": "array",
+                      "description": "Company Funding data when `funding_data=include`",
+                      "example": [
+                        {
+                          "funding_type": "Grant",
+                          "money_raised": 25000000,
+                          "announced_date": {
+                            "day": 1,
+                            "month": 1,
+                            "year": 2001
+                          },
+                          "number_of_investor": 1,
+                          "investor_list": [
+                            {
+                              "linkedin_profile_url": "https://linkedin.com/company/darpa",
+                              "name": "DARPA",
+                              "type": "organization"
+                            }
+                          ]
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "funding_type": {
+                            "type": "string",
+                            "description": "Type of funding"
+                          },
+                          "money_raised": {
+                            "type": "integer",
+                            "description": "Amount of money raised"
+                          },
+                          "announced_date": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "description": "Date of announcement"
+                          },
+                          "number_of_investor": {
+                            "type": "integer",
+                            "description": "Number of investors in this round"
+                          },
+                          "investor_list": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "linkedin_profile_url": {
+                                  "type": "string",
+                                  "description": "LinkedIn Profile URL of investor"
+                                },
+                                "name": {
+                                  "type": "string",
+                                  "description": "Name of investor"
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "description": "Type of investor"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "categories": {
+                      "type": "array",
+                      "description": "A list of categories`",
+                      "example": [
+                        "artificial-intelligence",
+                        "virtual-reality"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "resolve_numeric_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enable support for Company Profile URLs with numerical IDs that you most frequently fetch from Sales Navigator. \n    We achieve this by resolving numerical IDs into vanity IDs with cached company profiles from [LinkDB](https://nubela.co/proxycurl/linkdb). \n    For example, we will turn `https://www.linkedin.com/company/1234567890` to `https://www.linkedin.com/company/acme-corp` -- for which the API endpoint only supports the latter.\n    \n    This parameter accepts the following values:\n    - `false` (default value) - Will not resolve numerical IDs.\n    - `true` - Enable support for Company Profile URLs with numerical IDs. \n    Costs an extra `2` credit on top of the base cost of the endpoint.\n    "
+          },
+          {
+            "in": "query",
+            "name": "categories",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Appends categories data of this company.\n\n    Default value is `\"exclude\"`.\n    The other acceptable value is `\"include\"`, which will include these categories (if available) for `1` extra credit.\n    "
+          },
+          {
+            "in": "query",
+            "name": "funding_data",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Returns a list of funding rounds that this company has received.\n\n    Default value is `\"exclude\"`.\n    The other acceptable value is `\"include\"`, which will include these categories (if available) for `1` extra credit.\n    "
+          },
+          {
+            "in": "query",
+            "name": "extra",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Company Profile with extra details from external sources. Details include Crunchbase ranking, contact email, phone number, Facebook account, Twitter account, funding rounds and amount, IPO status, investor information, etc.\n    \n    Default value is `\"exclude\"`.\n    The other acceptable value is `\"include\"`, which will include these extra details (if available) for `1` extra credit.\n    "
+          },
+          {
+            "in": "query",
+            "name": "exit_data",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Returns a list of investment portfolio exits.\n\n    Default value is `\"exclude\"`.\n    The other acceptable value is `\"include\"`, which will include these categories (if available) for `1` extra credit.\n    "
+          },
+          {
+            "in": "query",
+            "name": "acquisitions",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Provides further enriched data on acquisitions made by this company from external sources.\n\n    Default value is `\"exclude\"`.\n    The other acceptable value is `\"include\"`, which will include these acquisition data (if available) for `1` extra credit.\n    "
+          },
+          {
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn Company Profile to crawl.\n\n    URL should be in the format of `https://www.linkedin.com/company/<public_identifier>`\n    "
+          },
+          {
+            "in": "query",
+            "name": "use_cache",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "`if-present` The default behavior. Fetches profile from cache regardless of age of profile. If profile is not available in cache, API will attempt to source profile externally.\n\n`if-recent` API will make a best effort to return a fresh profile no older than 29 days.Costs an extra `1` credit on top of the cost of the base endpoint."
+          }
+        ]
+      }
+    },
+    "/api/linkedin/company/resolve": {
+      "get": {
+        "description": "Cost: 2 credits / successful request.\nResolve Company LinkedIn Profile from company name,\n    domain name and location.",
+        "operationId": "getApiLinkedinCompanyResolve",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "company_location",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The location / region of company.\n    ISO 3166-1 alpha-2 codes\n    "
+          },
+          {
+            "in": "query",
+            "name": "company_domain",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company website or Company domain\nRequires either `company_domain` or `company_name`"
+          },
+          {
+            "in": "query",
+            "name": "company_name",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company Name\nRequires either `company_domain` or `company_name`"
+          }
+        ]
+      }
+    },
+    "/api/linkedin/job": {
+      "get": {
+        "description": "Cost: 2 credits / successful request.\nGet structured data of a LinkedIn Job Profile",
+        "operationId": "getApiLinkedinJob",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linkedin_internal_id": {
+                      "type": "string"
+                    },
+                    "job_description": {
+                      "type": "string"
+                    },
+                    "apply_url": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "location": {
+                      "type": "object",
+                      "properties": {
+                        "country": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "postal_code": {
+                          "type": "string"
+                        },
+                        "latitude": {
+                          "type": "number"
+                        },
+                        "longitude": {
+                          "type": "number"
+                        },
+                        "street": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "company": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "url": {
+                          "type": "string"
+                        },
+                        "logo": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "seniority_level": {
+                      "type": "string"
+                    },
+                    "industry": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "employment_type": {
+                      "type": "string"
+                    },
+                    "job_functions": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "total_applicants": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn Job Profile to target.\n\n    URL should be in the format of\n    `https://www.linkedin.com/jobs/view/<job_id>`.\n    [Jobs Listing Endpoint](#jobs-api-jobs-listing-endpoint)\n    can be used to retrieve a job URL.\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/school/students/": {
+      "get": {
+        "description": "Cost: 3 credits / student returned.\nGet a list of students of a school or university.",
+        "operationId": "getApiLinkedinSchoolStudents",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "students": {
+                      "type": "array",
+                      "description": "\n        A list of student profiles (if enriched) and their associated profile URL.\n        ",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "profile_url": {
+                            "type": "string"
+                          },
+                          "profile": {
+                            "type": "object",
+                            "properties": {
+                              "public_identifier": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The vanity identifier of the public LinkedIn profile.\n                The vanity identifier comes after the `/in/` part of the LinkedIn Profile URL\n                in the following format: `https://www.linkedin.com/in/<public_identifier>`\n            "
+                              },
+                              "profile_pic_url": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A temporary link to the user's profile picture that is valid for 30 minutes. \n                The temporal nature of the link is by design to prevent having Proxycurl be the mirror for the images.\n                The developer is expected to handle these images by downloading the image and re-hosting the image.\n                See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n                Some profile pictures might be of the standard LinkedIn's profile picture placeholder. It is so because. See [this post](https://nubela.co/blog/why-do-most-linkedin-profiles-fetched-via-the-person-profile-endpoint-return-a-placeholder-profile-picture/) for context.\n            "
+                              },
+                              "background_cover_image_url": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A temporary link to the user's background cover picture\n                that is valid for 30 minutes.\n                The temporal nature of the link is by design to prevent\n                having Proxycurl be the mirror for the images.\n                The developer is expected to handle these images \n                by downloading the image and re-hosting the image. \n                See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n            "
+                              },
+                              "first_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "First name of the user."
+                              },
+                              "last_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "Last name of the user."
+                              },
+                              "full_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                Full name of the user (`first_name` + `last_name`)\n            "
+                              },
+                              "occupation": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The title and company name of the user's current employment.\n            "
+                              },
+                              "headline": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The tagline written by the user for his profile.\n            "
+                              },
+                              "summary": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                A blurb (longer than the tagline) written by the user for his profile.\n            "
+                              },
+                              "country": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "\n                The user's country of residence depicted by\n                a 2-letter country code (ISO 3166-1 alpha-2).\n            "
+                              },
+                              "country_full_name": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The user's country of residence, in English words."
+                              },
+                              "city": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The city that the user is living at."
+                              },
+                              "state": {
+                                "type": "string",
+                                "nullable": true,
+                                "description": "The state that the user is living at."
+                              },
+                              "experiences": {
+                                "type": "array",
+                                "description": "The user's list of historic work experiences."
+                              },
+                              "education": {
+                                "type": "array",
+                                "description": "The user's list of education background."
+                              },
+                              "languages": {
+                                "type": "array",
+                                "description": "\n                A list of languages that the user claims to be familiar with,\n                and has added to his/her profile.\n                Do note that we do not have the proficiency level as\n                that data point is not available on a public LinkedIn profile.\n            "
+                              },
+                              "accomplishment_organisations": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy organizations that this user is part of.\n            ",
+                                "example": [
+                                  {
+                                    "starts_at": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 2012
+                                    },
+                                    "ends_at": {
+                                      "day": 1,
+                                      "month": 8,
+                                      "year": 2016
+                                    },
+                                    "org_name": "Microsoft",
+                                    "title": "Software Developer",
+                                    "description": null
+                                  }
+                                ]
+                              },
+                              "accomplishment_publications": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy publications that this user has partook in.\n            ",
+                                "example": [
+                                  {
+                                    "name": "Nobel Peace Prize",
+                                    "publisher": "Acme Corp",
+                                    "published_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    ",
+                                    "url": "https://example.com"
+                                  }
+                                ]
+                              },
+                              "accomplishment_honors_awards": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy honours and awards that this user has won.\n            ",
+                                "example": [
+                                  {
+                                    "title": "Nobel Peace Prize",
+                                    "issuer": "Acme Corp",
+                                    "issued_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    "
+                                  }
+                                ]
+                              },
+                              "accomplishment_patents": {
+                                "type": "array",
+                                "description": "List of noteworthy patents won by this user.",
+                                "example": [
+                                  {
+                                    "title": "The art of war",
+                                    "issuer": "Acme Corp",
+                                    "issued_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 1970
+                                    },
+                                    "description": "\n                        Lorem ipsum dolor sit amet, consectetur adipiscing elit\n                    ",
+                                    "application_number": "123",
+                                    "patent_number": "123",
+                                    "url": null
+                                  }
+                                ]
+                              },
+                              "accomplishment_courses": {
+                                "type": "array",
+                                "description": "List of noteworthy courses partook by this user.",
+                                "example": [
+                                  {
+                                    "name": "The course about ABCs",
+                                    "number": "123"
+                                  }
+                                ]
+                              },
+                              "accomplishment_projects": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy projects undertaken by this user.\n            "
+                              },
+                              "accomplishment_test_scores": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy test scores accomplished by this user.\n            ",
+                                "example": [
+                                  {
+                                    "name": "CS1101S",
+                                    "score": "A",
+                                    "date_on": {
+                                      "day": 1,
+                                      "month": 1,
+                                      "year": 2010
+                                    },
+                                    "description": "Nailed it without studying."
+                                  }
+                                ]
+                              },
+                              "volunteer_work": {
+                                "type": "array",
+                                "description": "List of historic volunteer work experiences."
+                              },
+                              "certifications": {
+                                "type": "array",
+                                "description": "\n                List of noteworthy certifications accomplished by this user.\n            "
+                              },
+                              "connections": {
+                                "type": "integer",
+                                "nullable": true,
+                                "description": "Total *count* of LinkedIn connections."
+                              },
+                              "people_also_viewed": {
+                                "type": "array",
+                                "description": "\n                A list of other LinkedIn profiles closely related to this user.\n            "
+                              },
+                              "recommendations": {
+                                "type": "array",
+                                "description": "\n                List of recommendations made by other users about this profile.\n            ",
+                                "example": [
+                                  "Professional and dedicated approach towards clients and collegues."
+                                ]
+                              },
+                              "activities": {
+                                "type": "array",
+                                "description": "A list of LinkedIn status activities."
+                              },
+                              "similarly_named_profiles": {
+                                "type": "array",
+                                "description": "\n                A list of other LinkedIn profiles with similar names.\n            "
+                              },
+                              "articles": {
+                                "type": "array",
+                                "description": "\n                A list of content-based articles posted by this user.\n            ",
+                                "example": [
+                                  {
+                                    "title": "Manufacturing opportunity",
+                                    "link": "https://www.linkedin.com/pulse/manufacturing-opportunity-bill-gates/",
+                                    "published_date": {
+                                      "day": 27,
+                                      "month": 11,
+                                      "year": 2019
+                                    },
+                                    "author": "Bill Gates",
+                                    "image_url": "https://media-exp1.licdn.com/dms/image/C4E12AQFftuPi0UiqWA/article-cover_image-shrink_720_1280/0/1574801149114?e=1640822400&v=beta&t=ZAe3ERmQCM8QHGmRPS2LJ-C76GD5PR7FBHMVL4Z6iVg"
+                                  }
+                                ]
+                              },
+                              "groups": {
+                                "type": "array",
+                                "description": "\n                A list of LinkedIn groups that this user is a part of.\",\n            ",
+                                "example": [
+                                  {
+                                    "profile_pic_url": "https://media-exp1.licdn.com/dms/image/C4D07AQG9IK9V0pk3mQ/group-logo_image-shrink_92x92/0/1631371531293?e=1642060800&v=beta&t=UK1tfIppWa-Nx7k9whmm5f9XdZoBdJhApf9N3ke3204",
+                                    "name": "Hadoop Users",
+                                    "url": "https://www.linkedin.com/groups/988957"
+                                  }
+                                ]
+                              }
+                            },
+                            "nullable": true
+                          }
+                        }
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "\n        The API URI that will lead to the next page of results.\n        "
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Limit the result set to the country locality of the profile. For example, set the parameter of `country=us` if you only want profiles from the US.\n\n    This parameter accepts a **case-insensitive** [Alpha-2 ISO3166 country code](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).\n\n    Costs an extra `3` credit per result returned.\n    "
+          },
+          {
+            "in": "query",
+            "name": "enrich_profiles",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Get the full profile of students instead of only their profile urls.\n\n    Each request respond with a streaming response of profiles.\n\n    The valid values are:\n    \n    * `skip` (default): lists student's profile url\n    * `enrich`: lists full profile of students\n\n    *Calling this API endpoint with this parameter would add `1` credit per student returned.*\n    "
+          },
+          {
+            "in": "query",
+            "name": "search_keyword",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Filter students by their major by matching the student's major against a *regular expression*.\n\n    The default value of this parameter is `null`.\n\n    The accepted value is a *regular expression* (regex).\n\n    (The base cost of calling this API endpoint with this parameter would be `10` credits.\n    Each student matched and returned would cost `6` credits per student returned.)\n    "
+          },
+          {
+            "in": "query",
+            "name": "page_size",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Tune the maximum results returned per API call.\n\n    The default value of this parameter is `200000`.\n\n    Accepted values for this parameter is an integer ranging from `1` to `200000`.\n\n    When `enrich_profiles=enrich`, this parameter accepts value ranging from `1` to `100`.\n    "
+          },
+          {
+            "in": "query",
+            "name": "student_status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Parameter to tell the API to return past or current students.\n\n    Valid values are `current`, `past`, and `all`:\n\n    * `current` (default) : lists current students\n    * `past` : lists past students\n    * `all` : lists current & past students\n    "
+          },
+          {
+            "in": "query",
+            "name": "resolve_numeric_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enable support for School Profile URLs with numerical IDs that you most frequently fetch from Sales Navigator. \n    We achieve this by resolving numerical IDs into vanity IDs with cached company profiles from [LinkDB](https://nubela.co/proxycurl/linkdb). \n    For example, we will turn `https://www.linkedin.com/school/1234567890` to `https://www.linkedin.com/school/acme-corp` -- for which the API endpoint only supports the latter.\n    \n    This parameter accepts the following values:\n    - `false` (default value) - Will not resolve numerical IDs.\n    - `true` - Enable support for School Profile URLs with numerical IDs. \n    Costs an extra `2` credit on top of the base cost of the endpoint.\n    "
+          },
+          {
+            "in": "query",
+            "name": "linkedin_school_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn School Profile to target.\n\n    URL should be in the format of `https://www.linkedin.com/school/<public_identifier>`\n    "
+          }
+        ]
+      }
+    },
+    "/api/contact-api/personal-email": {
+      "get": {
+        "description": "Cost: 1 credit / email returned.\nGiven an LinkedIn profile, returns a list of personal emails belonging to this identity. Emails are verified to be deliverable.",
+        "operationId": "getApiContactApiPersonalEmail",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "emails": {
+                      "type": "array",
+                      "description": "A list of personal emails",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "invalid_emails": {
+                      "type": "array",
+                      "description": "A list of invalid personal emails",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email_validation",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Perform deliverability validation on each email. (Costs 1 extra credit per email found).\n    \n    Takes the following values:\n     * include - Perform email validation.\n     * exclude (default) - Do not perform email validation.\n    "
+          },
+          {
+            "in": "query",
+            "name": "linkedin_profile_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    LinkedIn Profile URL of the person you want to extract personal email addresses from.\n    "
+          }
+        ]
+      }
+    },
+    "/api/v2/linkedin/company/job": {
+      "get": {
+        "description": "Cost: 2 credits / successful request.\nList jobs posted by a company on LinkedIn",
+        "operationId": "getApiV2LinkedinCompanyJob",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "company": {
+                            "type": "string"
+                          },
+                          "company_url": {
+                            "type": "string"
+                          },
+                          "job_title": {
+                            "type": "string"
+                          },
+                          "job_url": {
+                            "type": "string"
+                          },
+                          "list_date": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "next_page_no": {
+                      "type": "integer"
+                    },
+                    "next_page_api_url": {
+                      "type": "string",
+                      "example": "https://nubela.co/proxycurl/api/v2/linkedin/company/job?pagination=eyJwYWdlIjogMX0&search_id=1035"
+                    },
+                    "previous_page_no": {
+                      "type": "integer",
+                      "nullable": true
+                    },
+                    "previous_page_api_url": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "when",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The time when the job is posted,\n    It accepts the following case-insensitive values only:\n    - `yesterday`\n    - `past-week`\n    - `past-month`\n    - `anytime` (default)\n    "
+          },
+          {
+            "in": "query",
+            "name": "flexibility",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The flexibility of the job.\n    It accepts the following 3 case insensitive values only:\n    - `remote`\n    - `on-site`\n    - `hybrid`\n    - `anything` (default)\n    "
+          },
+          {
+            "in": "query",
+            "name": "geo_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The `geo_id` of the location to search for.\n    For example, `92000000` is the `geo_id` of world wide.\n\n    See [this article](https://nubela.co/blog/how-to-fetch-geo_id-parameter-for-the-job-api/?utm_source=blog&utm_medium=web&utm_campaign=docs-redirect-to-geo_id-article) as to how you may be able to match regions to `geo_id` input values.\n    "
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The keyword to search for.\n    "
+          },
+          {
+            "in": "query",
+            "name": "search_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The `search_id` of the company on LinkedIn.\n    You can get the `search_id` of a LinkedIn company via\n    [Company Profile API](#company-api-company-profile-endpoint).\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/company/employees/count/": {
+      "get": {
+        "description": "Cost: 1 credit / successful request.\nGet a number of total employees of a Company.\n\nGet an employee count of this company from various sources.",
+        "operationId": "getApiLinkedinCompanyEmployeesCount",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_employee": {
+                      "type": "integer"
+                    },
+                    "linkedin_employee_count": {
+                      "type": "integer",
+                      "nullable": true,
+                      "description": "The scraped value of employee count of this company from it's LinkedIn profile. This value does not respect `employement_status` parameter. It will always return the curent employee count of this company from LinkedIn.",
+                      "example": 99
+                    },
+                    "linkdb_employee_count": {
+                      "type": "integer",
+                      "description": "The total number of employees found in LinkDB for this company. This value is limited by pre-crawled LinkedIn profiles stored in [LinkDB](https://nubela.co/proxycurl/linkdb)"
+                    },
+                    "regression_notice": {
+                      "type": "string",
+                      "default": "Hello developer, we have renamed `total_employee` key to `linkdb_employee_count` to fix the bad grammar. We have kept `total_employee` for backwards compatibility, so please do not use it as we will remove it down the road. To see which keys are officially supported, refer to our API docs at https://nubela.co/proxycurl/docs#company-api-employee-count-endpoint"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "linkedin_employee_count",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Option to include a scraped employee count value from the target company's LinkedIn profile.\n\n    Valid values are `include` and `exclude`:\n\n    * `exclude` (default) : To exclude the scraped employee count.\n    * `include` : To include the scraped employee count.\n\n    Costs an extra `1` credit on top of the base cost of the endpoint.\n    "
+          },
+          {
+            "in": "query",
+            "name": "employment_status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Parameter to tell the API to filter past or current employees.\n\n    Valid values are `current`, `past`, and `all`:\n\n    * `current` (default) : count current employees\n    * `past` : count past employees\n    * `all` : count current & past employees\n    "
+          },
+          {
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn Company Profile to target.\n\n    URL should be in the format of `https://www.linkedin.com/company/<public_identifier>`\n    "
+          }
+        ]
+      }
+    },
+    "/api/v2/linkedin": {
+      "get": {
+        "description": "Cost: 1 credit / successful request.\nGet structured data of a Personal Profile",
+        "operationId": "getApiV2Linkedin",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "public_identifier": {
+                      "type": "string",
+                      "description": "The vanity identifier of the public LinkedIn profile. The vanity identifier comes after the `/in/` part of the LinkedIn Profile URL in the following format: `https://www.linkedin.com/in/<public_identifier>`"
+                    },
+                    "profile_pic_url": {
+                      "type": "string",
+                      "description": "A temporary link to the user's profile picture that is valid for 30 minutes. The temporal nature of the link is by design to prevent having Proxycurl be the mirror for the images. The developer is expected to handle these images by downloading the image and re-hosting the image. See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context.\n                \n                Some profile pictures might be of the standard LinkedIn's profile picture placeholder. It is so because. See [this post](https://nubela.co/blog/why-do-most-linkedin-profiles-fetched-via-the-person-profile-endpoint-return-a-placeholder-profile-picture/) for context."
+                    },
+                    "background_cover_image_url": {
+                      "type": "string",
+                      "description": "A temporary link to the user's background cover picture that is valid for 30 minutes. The temporal nature of the link is by design to prevent having Proxycurl be the mirror for the images. The developer is expected to handle these images by downloading the image and re-hosting the image. See [this post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for context."
+                    },
+                    "first_name": {
+                      "type": "string",
+                      "description": "First name of the user."
+                    },
+                    "last_name": {
+                      "type": "string",
+                      "description": "Last name of the user."
+                    },
+                    "full_name": {
+                      "type": "string",
+                      "description": "Full name of the user (`first_name` + `last_name`)"
+                    },
+                    "occupation": {
+                      "type": "string",
+                      "description": "The title and company name of the user's current employment."
+                    },
+                    "headline": {
+                      "type": "string",
+                      "description": "The tagline written by the user for his profile."
+                    },
+                    "summary": {
+                      "type": "string",
+                      "description": "A blurb (longer than the tagline) written by the user for his profile."
+                    },
+                    "country": {
+                      "type": "string",
+                      "description": "The user's country of residence depicted by a 2-letter country code (ISO 3166-1 alpha-2)."
+                    },
+                    "country_full_name": {
+                      "type": "string",
+                      "description": "The user's country of residence, in English words."
+                    },
+                    "city": {
+                      "type": "string",
+                      "description": "The city that the user is living at."
+                    },
+                    "state": {
+                      "type": "string",
+                      "description": "The state that the user is living at."
+                    },
+                    "experiences": {
+                      "type": "array",
+                      "description": "The user's list of historic work experiences.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "starts_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "ends_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "company": {
+                            "type": "string",
+                            "description": "The company's display name."
+                          },
+                          "company_linkedin_profile_url": {
+                            "type": "string",
+                            "description": "\n        The company's profile URL.\n\n        If present, could be used with [Company Profile Endpoint](#company-api-company-profile-endpoint) for more info.\n        "
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          },
+                          "logo_url": {
+                            "type": "string",
+                            "description": "URL of the logo of the organisation."
+                          }
+                        }
+                      }
+                    },
+                    "education": {
+                      "type": "array",
+                      "description": "The user's list of education background.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "starts_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "ends_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "field_of_study": {
+                            "type": "string"
+                          },
+                          "degree_name": {
+                            "type": "string"
+                          },
+                          "school": {
+                            "type": "string"
+                          },
+                          "school_linkedin_profile_url": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "logo_url": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "languages": {
+                      "type": "array",
+                      "description": "A list of languages that the user claims to be familiar with, and has added to his/her profile.\n                \n                Do note that we do not have the proficiency level as that data point is not available on a public LinkedIn profile.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "accomplishment_organisations": {
+                      "type": "array",
+                      "description": "List of noteworthy organizations that this user is part of.",
+                      "example": [
+                        {
+                          "starts_at": {
+                            "day": 1,
+                            "month": 1,
+                            "year": 2012
+                          },
+                          "ends_at": {
+                            "day": 1,
+                            "month": 8,
+                            "year": 2016
+                          },
+                          "org_name": "Microsoft",
+                          "title": "Software Developer",
+                          "description": null
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "starts_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "ends_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "org_name": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "accomplishment_publications": {
+                      "type": "array",
+                      "description": "List of noteworthy publications that this user has partook in.",
+                      "example": [
+                        {
+                          "name": "Nobel Peace Prize",
+                          "publisher": "Acme Corp",
+                          "published_on": {
+                            "day": 1,
+                            "month": 1,
+                            "year": 1970
+                          },
+                          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                          "url": "https://example.com"
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "Name of the publication."
+                          },
+                          "publisher": {
+                            "type": "string",
+                            "description": "The publishing organisation body."
+                          },
+                          "published_on": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "description": "Date of publication."
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Description of the publication."
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "URL of the publication."
+                          }
+                        }
+                      }
+                    },
+                    "accomplishment_honors_awards": {
+                      "type": "array",
+                      "description": "List of noteworthy honours and awards that this user has won.",
+                      "example": [
+                        {
+                          "title": "Nobel Peace Prize",
+                          "issuer": "Acme Corp",
+                          "issued_on": {
+                            "day": 1,
+                            "month": 1,
+                            "year": 1970
+                          },
+                          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "Title of the honour/award."
+                          },
+                          "issuer": {
+                            "type": "string",
+                            "description": "The organisation body issuing this honour/award."
+                          },
+                          "issued_on": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "description": "Date that this honour/awared was issued."
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Description of the honour/award."
+                          }
+                        }
+                      }
+                    },
+                    "accomplishment_patents": {
+                      "type": "array",
+                      "description": "List of noteworthy patents won by this user.",
+                      "example": [
+                        {
+                          "title": "The art of war",
+                          "issuer": "Acme Corp",
+                          "issued_on": {
+                            "day": 1,
+                            "month": 1,
+                            "year": 1970
+                          },
+                          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                          "application_number": "123",
+                          "patent_number": "123",
+                          "url": null
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string",
+                            "description": "Title of the patent."
+                          },
+                          "issuer": {
+                            "type": "string",
+                            "description": "The organisation body that issued the patent."
+                          },
+                          "issued_on": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "description": "Date of patent issuance."
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Description of the patent."
+                          },
+                          "application_number": {
+                            "type": "string",
+                            "description": "Numerical representation that identifies the patent."
+                          },
+                          "patent_number": {
+                            "type": "string",
+                            "description": "Application number of the patent."
+                          },
+                          "url": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "accomplishment_courses": {
+                      "type": "array",
+                      "description": "List of noteworthy courses partook by this user.",
+                      "example": [
+                        {
+                          "name": "The course about ABCs",
+                          "number": "123"
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "Name of the course"
+                          },
+                          "number": {
+                            "type": "string",
+                            "description": "The numerical representation of the course"
+                          }
+                        }
+                      }
+                    },
+                    "accomplishment_projects": {
+                      "type": "array",
+                      "description": "List of noteworthy projects undertaken by this user.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "starts_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "ends_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Name of the project that has been or is currently being worked on."
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Description of the project."
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "A web location related to the project."
+                          }
+                        }
+                      }
+                    },
+                    "accomplishment_test_scores": {
+                      "type": "array",
+                      "description": "List of noteworthy test scores accomplished by this user.",
+                      "example": [
+                        {
+                          "name": "CS1101S",
+                          "score": "A",
+                          "date_on": {
+                            "day": 1,
+                            "month": 1,
+                            "year": 2010
+                          },
+                          "description": "Nailed it without studying."
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string",
+                            "description": "Title of the course for which test score was derived from."
+                          },
+                          "score": {
+                            "type": "string",
+                            "description": "Test score"
+                          },
+                          "date_on": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            },
+                            "description": "Date of test was assesed."
+                          },
+                          "description": {
+                            "type": "string",
+                            "description": "Description of the test score."
+                          }
+                        }
+                      }
+                    },
+                    "volunteer_work": {
+                      "type": "array",
+                      "description": "List of historic volunteer work experiences.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "starts_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "ends_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "title": {
+                            "type": "string",
+                            "description": "Name of volunteer activity."
+                          },
+                          "cause": {
+                            "type": "string"
+                          },
+                          "company": {
+                            "type": "string",
+                            "description": "The company's display name."
+                          },
+                          "company_linkedin_profile_url": {
+                            "type": "string",
+                            "description": "\n        The company's profile URL.\n\n        If present, could be used with [Company Profile Endpoint](#company-api-company-profile-endpoint) for more info.\n        "
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "logo_url": {
+                            "type": "string",
+                            "description": "URL of the logo of the organisation."
+                          }
+                        }
+                      }
+                    },
+                    "certifications": {
+                      "type": "array",
+                      "description": "List of noteworthy certifications accomplished by this user.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "starts_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "ends_at": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Name of the course or program."
+                          },
+                          "license_number": {
+                            "type": "string"
+                          },
+                          "display_source": {
+                            "type": "string"
+                          },
+                          "authority": {
+                            "type": "string",
+                            "description": "The organisation body issuing this certificate."
+                          },
+                          "url": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "connections": {
+                      "type": "integer",
+                      "description": "Total *count* of LinkedIn connections."
+                    },
+                    "people_also_viewed": {
+                      "type": "array",
+                      "description": "A list of other LinkedIn profiles closely related to this user.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "link": {
+                            "type": "string",
+                            "description": "\n        URL of the profile.\n\n        Useable with [Person profile endpoint](#people-api-person-profile-endpoint)\n        "
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "recommendations": {
+                      "type": "array",
+                      "description": "List of recommendations made by other users about this profile.",
+                      "example": [
+                        "Professional and dedicated approach towards clients and collegues."
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "activities": {
+                      "type": "array",
+                      "description": "A list of LinkedIn status activities.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "link": {
+                            "type": "string"
+                          },
+                          "activity_status": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "similarly_named_profiles": {
+                      "type": "array",
+                      "description": "A list of other LinkedIn profiles with similar names.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "link": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "location": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "articles": {
+                      "type": "array",
+                      "description": "A list of content-based articles posted by this user.",
+                      "example": [
+                        {
+                          "title": "Manufacturing opportunity",
+                          "link": "https://www.linkedin.com/pulse/manufacturing-opportunity-bill-gates/",
+                          "published_date": {
+                            "day": 27,
+                            "month": 11,
+                            "year": 2019
+                          },
+                          "author": "Bill Gates",
+                          "image_url": "https://media-exp1.licdn.com/dms/image/C4E12AQFftuPi0UiqWA/article-cover_image-shrink_720_1280/0/1574801149114?e=1640822400&v=beta&t=ZAe3ERmQCM8QHGmRPS2LJ-C76GD5PR7FBHMVL4Z6iVg"
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "link": {
+                            "type": "string"
+                          },
+                          "published_date": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "integer"
+                              },
+                              "month": {
+                                "type": "integer"
+                              },
+                              "year": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "author": {
+                            "type": "string"
+                          },
+                          "image_url": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "groups": {
+                      "type": "array",
+                      "description": "A list of LinkedIn groups that this user is a part of.",
+                      "example": [
+                        {
+                          "profile_pic_url": "https://media-exp1.licdn.com/dms/image/C4D07AQG9IK9V0pk3mQ/group-logo_image-shrink_92x92/0/1631371531293?e=1642060800&v=beta&t=UK1tfIppWa-Nx7k9whmm5f9XdZoBdJhApf9N3ke3204",
+                          "name": "Hadoop Users",
+                          "url": "https://www.linkedin.com/groups/988957"
+                        }
+                      ],
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "profile_pic_url": {
+                            "type": "string",
+                            "description": "The URL to the profile picture of this LinkedIn Group"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Name of LinkedIn group for which this user is in"
+                          },
+                          "url": {
+                            "type": "string",
+                            "description": "URL to the LinkedIn Group"
+                          }
+                        }
+                      }
+                    },
+                    "skills": {
+                      "type": "array",
+                      "description": "A list of keyword-based skills that this user boasts of on his LinkedIn profile.",
+                      "example": [
+                        "branding",
+                        "cad tools",
+                        "art"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "inferred_salary": {
+                      "type": "object",
+                      "properties": {
+                        "min": {
+                          "type": "number",
+                          "example": 35000
+                        },
+                        "max": {
+                          "type": "number",
+                          "example": 45000
+                        }
+                      },
+                      "description": "A salary range inferred from the user's current job title and company.",
+                      "example": {
+                        "min": 35000,
+                        "max": 45000
+                      }
+                    },
+                    "gender": {
+                      "type": "string",
+                      "description": "Gender of the user.",
+                      "example": "male"
+                    },
+                    "birth_date": {
+                      "type": "object",
+                      "properties": {
+                        "day": {
+                          "type": "integer"
+                        },
+                        "month": {
+                          "type": "integer"
+                        },
+                        "year": {
+                          "type": "integer"
+                        }
+                      },
+                      "description": "Birth date of the user.",
+                      "example": {
+                        "day": 1,
+                        "month": 1,
+                        "year": 1990
+                      }
+                    },
+                    "industry": {
+                      "type": "string",
+                      "description": "Industry that the user works in.",
+                      "example": "government administration"
+                    },
+                    "interests": {
+                      "type": "array",
+                      "description": "A list of interests that the user has.",
+                      "example": [
+                        "education",
+                        "health",
+                        "human rights"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "extra": {
+                      "type": "object",
+                      "properties": {
+                        "github_profile_id": {
+                          "type": "string",
+                          "description": "This profile's Github account.",
+                          "example": "github-username"
+                        },
+                        "facebook_profile_id": {
+                          "type": "string",
+                          "description": "This profile's Facebook account.",
+                          "example": "facebook-username"
+                        },
+                        "twitter_profile_id": {
+                          "type": "string",
+                          "description": "This profile's twitter account.",
+                          "example": "twitter-username"
+                        }
+                      },
+                      "description": "A bundle of extra data on this user.",
+                      "example": {
+                        "github_profile_id": "github-username",
+                        "facebook_profile_id": "facebook-username",
+                        "twitter_profile_id": "twitter-username"
+                      }
+                    },
+                    "personal_emails": {
+                      "type": "array",
+                      "description": "A list of personal emails associated with this user.",
+                      "example": [
+                        "abc@gmail.com",
+                        "bcd@gmail.com",
+                        "cde@@outlook.com"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "personal_numbers": {
+                      "type": "array",
+                      "description": "A list of personal mobile phone numbers associated with this user.",
+                      "example": [
+                        "+6512345678",
+                        "+6285123450953",
+                        "+6502300340"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    URL of the LinkedIn Profile to crawl.\n\n    URL should be in the format of `https://www.linkedin.com/in/<public-identifier>`\n    "
+          },
+          {
+            "in": "query",
+            "name": "fallback_to_cache",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Tweaks the fallback behavior if an error arises from fetching a fresh profile.\n    \n    This parameter accepts the following values:\n    * `on-error` (default value) - Fallback to reading the profile from cache if an error arises.\n    * `never` - Do not ever read profile from cache.\n    "
+          },
+          {
+            "in": "query",
+            "name": "use_cache",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "`if-present` The default behavior. Fetches profile from cache regardless of age of profile. If profile is not available in cache, API will attempt to source profile externally.\n\n`if-recent` API will make a best effort to return a fresh profile no older than 29 days.Costs an extra `1` credit on top of the cost of the base endpoint."
+          },
+          {
+            "in": "query",
+            "name": "skills",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Include skills data from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide skills data field.\n    - `include` - Append skills data to the person profile object. Costs an extra `1` credit on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "inferred_salary",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Include inferred salary range from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide inferred salary data field.\n    - `include` - Append inferred salary range data to the person profile object. Costs an extra `1` credit on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "personal_email",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Person Profile with personal emails from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide personal emails data field.\n    - `include` - Append personal emails data to the person profile object. Costs an extra `1` credit per email returned on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "personal_contact_number",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Person Profile with personal numbers from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide personal numbers data field.\n    - `include` - Append personal numbers data to the person profile object. Costs an extra `1` credit per email returned on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "twitter_profile_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Person Profile with Twitter Id from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide Twitter Id data field.\n    - `include` - Append Twitter Id data to the person profile object. Costs an extra `1` credit on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "facebook_profile_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Person Profile with Facebook Id from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide Facebook Id data field.\n    - `include` - Append Facebook Id data to the person profile object. Costs an extra `1` credit on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "github_profile_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Person Profile with Github Id from external sources.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide Github Id data field.\n    - `include` - Append Github Id data to the person profile object. Costs an extra `1` credit on top of the cost of the base endpoint (if data is available).\n    "
+          },
+          {
+            "in": "query",
+            "name": "extra",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    Enriches the Person Profile with extra details from external sources. Extra details include gender, birth date, industry and interests.\n\n    This parameter accepts the following values:\n    - `exclude` (default value) - Does not provide extra data field.\n    - `include` - Append extra data to the person profile object. Costs an extra `1` credit on top of the cost of the base endpoint (if data is available).\n    "
+          }
+        ]
+      }
+    },
+    "/api/find/company/role": {
+      "get": {
+        "description": "Cost: 3 credits / successful request.\nFinds the closest (person) profile with a given role in a Company.\nFor example, you can use this endpoint to find the \"CTO\" of \"Apple\".\nThis API endpoint returns only one result that is the closest match.\n\nThere is also the [Employee Search Endpoint](https://nubela.co/proxycurl/docs#company-api-employee-search-api-endpoint) which is powered by [LinkDB](https://nubela.co/proxycurl/linkdb) if you require:\n\n* precision on the target company\n* a list of employees that matches a role (instead of one result).",
+        "operationId": "getApiFindCompanyRole",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "linkedin_profile_url": {
+                      "type": "string",
+                      "description": "LinkedIn Profile URL of the person that most closely matches the role"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "role",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Role of the profile that you are lookin up"
+          },
+          {
+            "in": "query",
+            "name": "company_name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the company that you are searching for"
+          }
+        ]
+      }
+    },
+    "/api/v2/linkedin/company/job/count": {
+      "get": {
+        "description": "Cost: 2 credits / successful request.\nCount number of jobs posted by a company on LinkedIn",
+        "operationId": "getApiV2LinkedinCompanyJobCount",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "when",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The time when the job is posted,\n    It accepts the following case-insensitive values only:\n    - `yesterday`\n    - `past-week`\n    - `past-month`\n    - `anytime` (default)\n    "
+          },
+          {
+            "in": "query",
+            "name": "flexibility",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The flexibility of the job.\n    It accepts the following 3 case insensitive values only:\n    - `remote`\n    - `on-site`\n    - `hybrid`\n    - `anything` (default)\n    "
+          },
+          {
+            "in": "query",
+            "name": "geo_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The `geo_id` of the location to search for.\n    For example, `92000000` is the `geo_id` of world wide.\n\n    See [this article](https://nubela.co/blog/how-to-fetch-geo_id-parameter-for-the-job-api/?utm_source=blog&utm_medium=web&utm_campaign=docs-redirect-to-geo_id-article) as to how you may be able to match regions to `geo_id` input values.\n    "
+          },
+          {
+            "in": "query",
+            "name": "keyword",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The keyword to search for.\n    "
+          },
+          {
+            "in": "query",
+            "name": "search_id",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    The `search_id` of the company on LinkedIn.\n    You can get the `search_id` of a LinkedIn company via\n    [Company Profile API](#company-api-company-profile-endpoint).\n    "
+          }
+        ]
+      }
+    },
+    "/api/linkedin/company/profile-picture": {
+      "get": {
+        "description": "Cost: 0 credit / successful request.\nGet the profile picture of a company.\n\nProfile pictures are served from cached company profiles found within [LinkDB](https://nubela.co/proxycurl/linkdb).\nIf the profile does not exist within [LinkDB](https://nubela.co/proxycurl/linkdb), then the API will return a `404` status code.",
+        "operationId": "getApiLinkedinCompanyProfilePicture",
+        "responses": {
+          "200": {
+            "description": "Default response",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tmp_profile_pic_url": {
+                      "type": "string",
+                      "description": "\n            Temporary URL to the profile picture (valid for just 30 minutes).\n            See this [blog post](https://nubela.co/blog/why-is-the-api-returning-s3-links-for-profile-pictures-scraped-from-linkedin-profiles/) for more information."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "in": "query",
+            "name": "linkedin_company_profile_url",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "\n    LinkedIn Profile URL of the company that you are trying to get the profile picture of.\n    "
+          }
+        ]
+      }
+    }
+  }
+}
