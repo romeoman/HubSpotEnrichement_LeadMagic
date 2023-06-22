@@ -1,8 +1,8 @@
-// Company Enrichment -> HubSpot Companies
+// LinkedIn Company URL -> HubSpot Companies
 
-// This code snippet is used to enrich company information in HubSpot using the LeadMagic API.
-// It retrieves contact information based on the company name, domain, and location from the inputFields of the enrolled company in the workflow.
-// The retrieved data is then used to update the relevant company properties within HubSpot.
+// This code snippet is used to retrieve the LinkedIn company URL using the LeadMagic API and update the relevant company properties in HubSpot.
+// It retrieves the LinkedIn company URL based on the company name, domain, and location from the inputFields of the enrolled company in the workflow.
+// The retrieved URL is then used to update the `linkedin_company_page` property for the company in HubSpot.
 
 // Import required libraries
 const axios = require('axios');
