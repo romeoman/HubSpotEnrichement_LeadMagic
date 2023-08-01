@@ -1,23 +1,11 @@
-/*
-This code retrieves the LinkedIn company page URL (`linkedin_company_page`) from the inputFields of the enrolled company in the workflow. 
-It then retrieves the LinkedIn company specialities using the LeadMagic API based on the LinkedIn company page URL. 
-The retrieved specialities are compared with the existing specialities for the company in HubSpot. 
-If there are new specialities to add, the code updates the `specialities` property for the company in HubSpot, ensuring that the limit of 10 specialities per company is maintained. 
-The code also logs the company ID, LinkedIn company page URL, retrieved specialities, and the updated and not updated specialities. 
-Finally, it returns the retrieved data as the output.
-
-Please note that in order to run this code, you need to provide the LinkedIn company URL in the `linkedin_company_page` input field.
-*/
-
-
 // Import required libraries
 const axios = require('axios');
 const hubspot = require('@hubspot/api-client');
 
 exports.main = async (event) => {
-  // Get the 'linkedin_company_page' and 'hs_object_id' of the company currently enrolled in the workflow from inputFields
+  // Get the 'linkedin_company_page' and 'hs_object_id' from inputFields
   const liurl = event.inputFields['linkedin_company_page'];
-  const hs_object_id = event.inputFields['hs_object_id']; // Add this line to retrieve the company HubSpot ID
+  const hs_object_id = event.inputFields['hs_object_id'];
 
   // Make a request to LeadMagic API to retrieve contact information based on hubspot data of the enrolled contact
   const options = {
@@ -27,6 +15,7 @@ exports.main = async (event) => {
     }
   };
 
+  // Make a request to LeadMagic API to retrieve contact information based on the linkedin_company_page of the enrolled contact
   let leadMagicResponse;
   try {
     leadMagicResponse = await axios.get(`https://api.leadmagic.io/business/api/linkedin/company?url=${liurl}`, options);
@@ -50,6 +39,25 @@ exports.main = async (event) => {
   const hubspotClient = new hubspot.Client({
     accessToken: process.env.ACCESSTOKEN
   });
+
+  // Define the additional properties to update
+  const additionalProperties = ['follower_count', 'universal_name_id', 'search_id'];
+
+  // Update the properties directly without checking if they exist
+  for (const property of additionalProperties) {
+    try {
+      const update = {
+        properties: {
+          [property]: data[property]
+        }
+      };
+      await hubspotClient.crm.companies.basicApi.update(hs_object_id, update);
+      console.log(`Successfully updated '${property}' property for company with id ${hs_object_id}`);
+    } catch (error) {
+      console.error(`Failed to update '${property}' property for company with id ${hs_object_id}: ${error.message}`);
+      return;
+    }
+  }
 
   // Check if the 'specialities' property exists in the 'companies' object
   let specialitiesProperty;
@@ -134,6 +142,9 @@ exports.main = async (event) => {
   // Log the updated and not updated specialities
   console.log('Updated Specialities:', optionsToUpdate);
   console.log('Not Updated Specialities:', optionsNotUpdated);
+
+  // Add 'search_id' to the output
+  data.search_id = data.search_id || '';
 
   // Return all the retrieved data as the output
   return {
